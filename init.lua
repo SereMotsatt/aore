@@ -1,5 +1,5 @@
 aore = {}
-aore.ver = 20251113
+aore.ver = 20251115
 aore.registered = {}
 
 --local settings = core.settings
@@ -11,13 +11,13 @@ dofile(modpath .. "/api.lua")
 
 
 aore.register_node("aore:test_node", {
-	description = "Aore test",
+	description = "* test",
 	tiles = {"aore_test_block.png"},
 	groups = {supermetal=2},
 }, "testall")
 
 aore.register_node("aore:test_egg", {
-	description = "Aore egg test",
+	description = "* egg test",
 	tiles = {"aore_test_block.png"},
 	drawtype = "nodebox",
 	node_box = {

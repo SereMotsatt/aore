@@ -6,6 +6,8 @@ aore.registered_craftitems = {}
 aore.registered_tools = {}
 aore.registered_crafts = {}
 
+local S = core.get_translator("aore")
+
 --
 -- Helpers
 --
@@ -38,7 +40,6 @@ function aore.register_craft(name, teibol, flag)
 	table.insert(aore.registered_crafts, {prename, teibol, preflag})
 end
 
-
 --
 -- Main
 --
@@ -56,7 +57,7 @@ function aore.register(namemod, teibol)
 		stick_name = teibol.stick_name or "default:stick",
 		toolpower = teibol.toolpower or 1,
 		flags = teibol.flags or {},
-		flags_hsl = teibol.flags_hsl or ":0:0:0",
+		flags_color = teibol.flags_color or "#FFFFFF",
 		custom_tools = teibol.custom_tools or false,
 		custom_craft_tools = teibol.custom_craft_tools or false,
 		ore_groups = teibol.groups or {cracky=1}
@@ -88,17 +89,17 @@ function aore.register(namemod, teibol)
 	end
 	--core.log("none", tostring(#othergroup).." "..def.toolpower)
 	core.register_craftitem(namemod.."_lump", {
-		description = def.description .. " lump",
+		description = S("@1 lump", def.description),
 		inventory_image = def.main_texture.."_lump.png",
 		wield_item = def.main_texture.."_lump.png",
 	})
 	core.register_craftitem(namemod.."_ingot", {
-		description = def.description .. " ingot",
+		description = S("@1 ingot", def.description),
 		inventory_image = def.main_texture.."_ingot.png",
 		wield_item = def.main_texture.."_ingot.png",
 	})
 	core.register_node(namemod.."_ore", {
-		description = def.description .. " ore",
+		description = S("@1 ore", def.description),
 		tiles = {def.stone_texture.."^"..def.main_texture.."_mineral.png"},
 		drop = {
 			items = {
@@ -108,7 +109,7 @@ function aore.register(namemod, teibol)
 		groups = def.ore_groups,
 	})
 
-	--ORE MAPGEN
+	--ORE MAPGEN (Very Basic)
 	if custom_mapgen ~= true then
 		core.register_ore({
 			name = namemod.."_oremapgen",
@@ -132,14 +133,14 @@ function aore.register(namemod, teibol)
 	end
 	
 	core.register_node(namemod.."_block", {
-		description = def.description.." block",
+		description = S("@1 block", def.description),
 		tiles = {def.main_texture.."_block.png"},
 		groups = othergroup,
 	})
 	--TOOLS
 	if custom_tools ~= true then
 		core.register_tool(namemod.."_pick", {
-			description = def.description.." pick",
+			description = S("@1 pick", def.description),
 			inventory_image = def.main_texture.."_tool_pick.png",
 			wield_item = def.main_texture.."_tool_pick.png",
 			tool_capabilities = {
@@ -153,7 +154,7 @@ function aore.register(namemod, teibol)
 			},
 		})
 		core.register_tool(namemod.."_shovel", {
-			description = def.description.." shovel",
+			description = S("@1 shovel", def.description),
 			inventory_image = def.main_texture.."_tool_shovel.png",
 			wield_item = def.main_texture.."_tool_shovel.png",
 			tool_capabilities = {
@@ -166,7 +167,7 @@ function aore.register(namemod, teibol)
 			},
 		})
 		core.register_tool(namemod.."_axe", {
-			description = def.description.." axe",
+			description = S("@1 axe", def.description),
 			inventory_image = def.main_texture.."_tool_axe.png",
 			wield_item = def.main_texture.."_tool_axe.png",
 			tool_capabilities = {
@@ -179,7 +180,7 @@ function aore.register(namemod, teibol)
 			},
 		})
 		core.register_tool(namemod.."_sword", {
-			description = def.description.." sword",
+			description = S("@1 sword", def.description),
 			inventory_image = def.main_texture.."_tool_sword.png",
 			tool_capabilities = {
 				full_punch_interval = 1,
@@ -259,11 +260,23 @@ function aore.register(namemod, teibol)
 			if def.flags[k] == aore.registered_nodes[i][3] then found = true end
 		end
 		if found then
-			local preregister_value = aore.registered_nodes[i][2]
+			local preregister_value = table.copy(aore.registered_nodes[i][2])
+			preregister_value.description = string.gsub(preregister_value.description, "*", def.description)
 			for m=1, #preregister_value.tiles do
-				preregister_value.tiles[m] = preregister_value.tiles[m] .. "^[hsl" .. def.flags_hsl
+				if preregister_value.tiles_nocolor ~= nil then
+					preregister_value.tiles[m] = "("..preregister_value.tiles[m].."^[multiply:"..def.flags_color..")^"..preregister_value.tiles_nocolor[m]
+				else
+					preregister_value.tiles[m] = preregister_value.tiles[m] .. "^[multiply:" .. def.flags_color
+				end
 			end
-			core.register_node(namemod.."_"..aore.registered_nodes[i][1], preregister_value)
+			if preregister_value.inventory_image ~= nil then
+				preregister_value.inventory_image = preregister_value.inventory_image .. "^[multiply:" .. def.flags_color
+			end
+			if preregister_value.wield_item ~= nil then
+				preregister_value.wield_item = preregister_value.wield_item .. "^[multiply:" .. def.flags_color
+			end
+			local prename = namemod.."_"..aore.registered_nodes[i][1]
+			core.register_node(prename, preregister_value)
 		end
 	end
 	
@@ -275,10 +288,16 @@ function aore.register(namemod, teibol)
 			if def.flags[k] == aore.registered_craftitems[i][3] then found = true end
 		end
 		if found then
-			local preregister_value = aore.registered_craftitems[i][2]
-			preregister_value.inventory_image = preregister_value.inventory_image .. "^[hsl" .. def.flags_hsl
-			preregister_value.wield_item = preregister_value.wield_item .. "^[hsl" .. def.flags_hsl
-			core.register_craftitem(namemod.."_"..aore.registered_craftitems[i][1], preregister_value)
+			local preregister_value = table.copy(aore.registered_craftitems[i][2])
+			preregister_value.description = string.gsub(preregister_value.description, "*", def.description)
+			if preregister_value.inventory_image ~= nil then
+				preregister_value.inventory_image = preregister_value.inventory_image .. "^[multiply:" .. def.flags_color
+			end
+			if preregister_value.wield_item ~= nil then
+				preregister_value.wield_item = preregister_value.wield_item .. "^[multiply:" .. def.flags_color
+			end
+			local prename = namemod.."_"..aore.registered_craftitems[i][1]
+			core.register_craftitem(prename, preregister_value)
 		end
 	end
 	
@@ -290,10 +309,16 @@ function aore.register(namemod, teibol)
 			if def.flags[k] == aore.registered_tools[i][3] then found = true end
 		end
 		if found then
-			local preregister_value = aore.registered_tools[i][2]
-			preregister_value.inventory_image = preregister_value.inventory_image .. "^[hsl" .. def.flags_hsl
-			preregister_value.wield_item = preregister_value.wield_item .. "^[hsl" .. def.flags_hsl
-			core.register_tool(namemod.."_"..aore.registered_tools[i][1], preregister_value)
+			local preregister_value = table.copy(aore.registered_tools[i][2])
+			preregister_value.description = string.gsub(preregister_value.description, "*", def.description)
+			if preregister_value.inventory_image ~= nil then
+				preregister_value.inventory_image = preregister_value.inventory_image .. "^[multiply:" .. def.flags_color
+			end
+			if preregister_value.wield_item ~= nil then
+				preregister_value.wield_item = preregister_value.wield_item .. "^[multiply:" .. def.flags_color
+			end
+			local prename = namemod.."_"..aore.registered_tools[i][1]
+			core.register_tool(prename, preregister_value)
 		end
 	end
 	
@@ -305,17 +330,17 @@ function aore.register(namemod, teibol)
 			if def.flags[k] == aore.registered_crafts[i][3] then found = true end
 		end
 		if found then
-			local preregister_value = aore.registered_crafts[i][2]
+			local preregister_value = table.copy(aore.registered_crafts[i][2])
 			if type(preregister_value.recipe) == "table" then
 				for m=1, #preregister_value.recipe do
 					for n=1, #preregister_value.recipe do
-						string.gsub(preregister_value.recipe[n], "namemod", namemod)
+						preregister_value.recipe[m][n] = string.gsub(preregister_value.recipe[m][n], "namemod", namemod)
 					end
 				end
 			else
 				preregister_value.recipe = string.gsub(preregister_value.recipe, "namemod", namemod)
 			end
-				preregister_value.output = string.gsub(preregister_value.output, "namemod", namemod)
+			preregister_value.output = string.gsub(preregister_value.output, "namemod", namemod)
 			core.register_craft(preregister_value)
 		end
 	end
