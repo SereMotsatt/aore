@@ -2,7 +2,7 @@ aore = {}
 aore.ver = 20251115
 aore.registered = {}
 
---local settings = core.settings
+aore.settings = core.settings
 
 modpath = core.get_modpath("aore")
 
@@ -29,4 +29,6 @@ aore.register_node("aore:test_egg", {
 		},
 	},
 	groups = {supermetal=2},
-}, "testall")
+})
+
+print("[AORE v"..aore.ver.."] has been loaded.")

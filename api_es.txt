@@ -45,6 +45,7 @@ aore.register(namemod, {
 	flags = teibol.flags or {},
 	
 	--Esto cambia el color para adaptar decoraciónes y otras cosas de otros creadores.
+	--Esto usa '^[multiply'.
 	flags_color = teibol.flags_color or "#FFFFFF",
 	
 	--Si es falso entonces no se generarán herramientas.
@@ -55,6 +56,9 @@ aore.register(namemod, {
 	
 	--Usado para customizar los grupos del bloque de mineral natural, Para endurecer el bloque de mineral natural.
 	ore_groups = teibol.groups or {cracky=1}
+	
+	--Si lo dejas en nil entonces las herramientas tendrán una durabilidad automatica.
+	tool_durability = teibol.tool_durability or nil
 	
 })
 

@@ -17,6 +17,12 @@ function aore.register_node(name, teibol, flag)
 	local prename = string.gsub(name, ":", "_")
 	local preflag = flag or prename
 	table.insert(aore.registered_nodes, {prename, teibol, preflag})
+	if aore.settings:get_bool("debug_mode", false) then
+		if flag == nil then
+			core.log("warning", "[AORE_REGISTER_NODE]: the flag in "..name.." was not introduced")
+		end
+		core.log("info", "[AORE_REGISTER_NODE]: "..name.." as "..prename)
+	end
 end
 
 function aore.register_craftitem(name, teibol, flag)
@@ -24,6 +30,12 @@ function aore.register_craftitem(name, teibol, flag)
 	local prename = string.gsub(name, ":", "_")
 	local preflag = flag or prename
 	table.insert(aore.registered_craftitems, {prename, teibol, preflag})
+	if aore.settings:get_bool("debug_mode", false) then
+		if flag == nil then
+			core.log("warning", "[AORE_REGISTER_CRAFTITEM]: the flag in "..name.." was not introduced")
+		end
+		core.log("info", "[AORE_REGISTER_CRAFTITEM]: "..name.." as "..prename)
+	end
 end
 
 function aore.register_tool(name, teibol, flag)
@@ -31,6 +43,12 @@ function aore.register_tool(name, teibol, flag)
 	local prename = string.gsub(name, ":", "_")
 	local preflag = flag or prename
 	table.insert(aore.registered_tools, {prename, teibol, preflag})
+	if aore.settings:get_bool("debug_mode", false) then
+		if flag == nil then
+			core.log("warning", "[AORE_REGISTER_TOOL]: the flag in "..name.." was not introduced")
+		end
+		core.log("info", "[AORE_REGISTER_TOOL]: "..name.." as "..prename)
+	end
 end
 
 function aore.register_craft(name, teibol, flag)
@@ -38,6 +56,12 @@ function aore.register_craft(name, teibol, flag)
 	local prename = string.gsub(name, ":", "_")
 	local preflag = flag or prename
 	table.insert(aore.registered_crafts, {prename, teibol, preflag})
+	if aore.settings:get_bool("debug_mode", false) then
+		if flag == nil then
+			core.log("warning", "[AORE_REGISTER_CRAFT]: the flag in "..name.." was not introduced")
+		end
+		core.log("info", "[AORE_REGISTER_CRAFT]: "..name.." as "..prename)
+	end
 end
 
 --
@@ -60,12 +84,14 @@ function aore.register(namemod, teibol)
 		flags_color = teibol.flags_color or "#FFFFFF",
 		custom_tools = teibol.custom_tools or false,
 		custom_craft_tools = teibol.custom_craft_tools or false,
-		ore_groups = teibol.groups or {cracky=1}
+		ore_groups = teibol.ore_groups or {cracky=1},
+		tool_durability = teibol.tool_durability or nil
 	}
 	table.insert(aore.registered, def)
 	local othergroup = {}
 	local otherdamage_group = {}
 	local otherdamage_group_sword = {}
+	local toolgroups = {}
 	if def.toolpower >= 25 then
 		othergroup = {supermetal=1}
 		otherdamage_group = {fleshy=6}
@@ -86,6 +112,14 @@ function aore.register(namemod, teibol)
 		othergroup = {cracky=2}
 		otherdamage_group = {fleshy=1}
 		otherdamage_group_sword = {fleshy=1}
+	end
+	toolgroups.cracky = {3.10/def.toolpower, 2.00/def.toolpower, 1.60/def.toolpower}
+	toolgroups.supermetal = {20.00/def.toolpower, 16.00/def.toolpower, 11.00/def.toolpower}
+	toolgroups.choppy = {4.60/def.toolpower, 3.00/def.toolpower, 1.60/def.toolpower}
+	toolgroups.snappy = {2.00/def.toolpower, 1.60/def.toolpower, 0.40/def.toolpower}
+	--Automatic
+	if def.tool_durability == nil then
+		def.tool_durability = 1 * (def.toolpower*12)
 	end
 	--core.log("none", tostring(#othergroup).." "..def.toolpower)
 	core.register_craftitem(namemod.."_lump", {
@@ -110,7 +144,7 @@ function aore.register(namemod, teibol)
 	})
 
 	--ORE MAPGEN (Very Basic)
-	if custom_mapgen ~= true then
+	if def.custom_mapgen ~= true then
 		core.register_ore({
 			name = namemod.."_oremapgen",
 			ore_type = "scatter",
@@ -138,7 +172,7 @@ function aore.register(namemod, teibol)
 		groups = othergroup,
 	})
 	--TOOLS
-	if custom_tools ~= true then
+	if def.custom_tools ~= true then
 		core.register_tool(namemod.."_pick", {
 			description = S("@1 pick", def.description),
 			inventory_image = def.main_texture.."_tool_pick.png",
@@ -147,8 +181,8 @@ function aore.register(namemod, teibol)
 				full_punch_interval = 1.0,
 				max_drop_level = 0,
 				groupcaps = {
-					cracky = {times = {3.10, 2.00, 1.60}, uses = 70, maxlevel = def.toolpower},
-					supermetal = {times = {20.00, 16.00, 11.00}, uses = 45, maxlevel = def.toolpower},
+					cracky = {times = toolgroups.cracky, uses = def.tool_durability, maxlevel = 1},
+					supermetal = {times = toolgroups.supermetal, uses = math.floor(def.tool_durability*0.5), maxlevel = 1},
 				},
 				damage_groups = otherdamage_group,
 			},
@@ -161,7 +195,7 @@ function aore.register(namemod, teibol)
 				full_punch_interval = 1.0,
 				max_drop_level = 0,
 				groupcaps = {
-					crumbly = {times={3.10, 1.60, 0.60}, uses=10, maxlevel = def.toolpower},
+					crumbly = {times={3.10, 1.60, 0.60}, uses= def.tool_durability, maxlevel = 1},
 				},
 				damage_groups = otherdamage_group,
 			},
@@ -174,7 +208,7 @@ function aore.register(namemod, teibol)
 				full_punch_interval = 1.0,
 				max_drop_level = 0,
 				groupcaps = {
-					choppy = {times = {4.60, 3.00, 1.60}, uses = 120, maxlevel = def.toolpower},
+					choppy = {times = {4.60, 3.00, 1.60}, uses = def.tool_durability, maxlevel = 1},
 				},
 				damage_groups = otherdamage_group,
 			},
@@ -186,7 +220,7 @@ function aore.register(namemod, teibol)
 				full_punch_interval = 1,
 				max_drop_level=0,
 				groupcaps={
-					snappy={times={2.00, 1.60, 0.40}, uses=120, maxlevel = def.toolpower},
+					snappy={times={2.00, 1.60, 0.40}, uses=def.tool_durability, maxlevel = 1},
 				},
 				damage_groups = otherdamage_group_sword,
 			},
@@ -215,7 +249,7 @@ function aore.register(namemod, teibol)
 		recipe = {{namemod.."_block"},},
 	})
 	
-	if custom_tools ~= true and custom_craft_tools ~= true then 
+	if def.custom_tools ~= true and def.custom_craft_tools ~= true then 
 		core.register_craft({
 			output = namemod.."_pick",
 			recipe = {
@@ -270,10 +304,10 @@ function aore.register(namemod, teibol)
 				end
 			end
 			if preregister_value.inventory_image ~= nil then
-				preregister_value.inventory_image = preregister_value.inventory_image .. "^[multiply:" .. def.flags_color
+				preregister_value.inventory_image = "("..preregister_value.inventory_image .. "^[multiply:" .. def.flags_color..")"
 			end
 			if preregister_value.wield_item ~= nil then
-				preregister_value.wield_item = preregister_value.wield_item .. "^[multiply:" .. def.flags_color
+				preregister_value.wield_item = "("..preregister_value.wield_item .. "^[multiply:" .. def.flags_color..")"
 			end
 			local prename = namemod.."_"..aore.registered_nodes[i][1]
 			core.register_node(prename, preregister_value)

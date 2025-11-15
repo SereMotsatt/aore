@@ -1,0 +1,2 @@
+#    Warn and inform for devs.
+debug_mode (Debug mode) bool false

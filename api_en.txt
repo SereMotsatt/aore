@@ -45,6 +45,7 @@ aore.register(namemod, {
 	flags = teibol.flags or {},
 	
 	--This change the color for adapt decorations and other things from others modders.
+	--This use '^[multiply'.
 	flags_color = teibol.flags_color or "#FFFFFF",
 	
 	--If is false then it will not generate tools.
@@ -55,6 +56,9 @@ aore.register(namemod, {
 	
 	--Used for customized the groups of the ore, to harden the mineral block.
 	ore_groups = teibol.groups or {cracky=1}
+	
+	--If you put nil or you don't put anything this the tools will have automatic durability.
+	tool_durability = teibol.tool_durability or nil
 	
 })
 
