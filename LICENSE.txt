@@ -1,4 +1,4 @@
-License of source code and textures
+License of source code
 ----------------------
 ISC License
 
