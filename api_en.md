@@ -3,7 +3,9 @@
 
 
 ## Main
+
 ´´´lua
+
 aore.register(namemod, {
 	--Description of the ore, is a description main.
 	description = teibol.description or namemod, 
@@ -59,6 +61,7 @@ aore.register(namemod, {
 	tool_durability = teibol.tool_durability or nil
 	
 })
+
 ´´´
 
 ## Helpers (It is used in conjunction with flags)
@@ -66,24 +69,39 @@ aore.register(namemod, {
 --If in any of 'register_node', 'register_craftitem' or 'register_tool'
 --you put the corresponding definition in the description the symbol '*'
 --then this will be replaced with the name of the ore that is using it.
+
 ´´´lua
+
 aore.register_node("aore:test_node", {node_def}, "testall")
+
 ´´´
+
 ´´´lua
+
 aore.register_craftitem("aore:test_craftitem", {craftitem_def}, "testall")
+
 ´´´
+
 ´´´lua
+
 aore.register_tool("aore:test_tool", {tool_def}, "testall")
+
 ´´´
+
 --If in 'register_craft' you put in the recipe/output of the definition the text 'namemod'
 --this will be replaced with the name mod and the name item together, something like this 'modname:itemname'
 --Useful for making crafts of the same ore. 
+
 ´´´lua
+
 aore.register_craft("aore:test_craft", {craft_def}, "testall")
+
 ´´´
 
 ## Test (Used this in other mod path)
+
 ´´´lua
+
 local modname = core.get_modpath(core.get_current_modname())
 
 aore.register(modname..":test", {
@@ -98,4 +116,5 @@ aore.register(modname..":test", {
 	flags = {"testall"}, --Test
 	flags_hsl = "#BB8855", --Test
 })
+
 ´´´
