@@ -4,8 +4,7 @@
 
 ## Principal
 
-´´´lua
-
+```lua
 aore.register(namemod, {
 	--Descripción de el mineral, es la description principal de todo.
 	description = teibol.description or namemod, 
@@ -61,47 +60,31 @@ aore.register(namemod, {
 	tool_durability = teibol.tool_durability or nil
 	
 })
-
-´´´
+```
 
 ## Ayudantes (Esto es usado junto con las flags)
 
---Si en cualquiera de 'register_node', 'register_craftitem' o 'register_tool' 
---pones en la description de la definición correspondiente el simbolo '*'
---entonces este se remplazará con el nombre del mineral que lo esté usando.
-
-´´´lua
-
+Si en cualquiera de 'register_node', 'register_craftitem' o 'register_tool' 
+pones en la description de la definición correspondiente el simbolo '*'
+entonces este se remplazará con el nombre del mineral que lo esté usando.
+```lua
 aore.register_node("aore:test_node", {node_def}, "testall")
-
-´´´
-
-´´´lua
 
 aore.register_craftitem("aore:test_craftitem", {craftitem_def}, "testall")
 
-´´´
-
-´´´lua
-
 aore.register_tool("aore:test_tool", {tool_def}, "testall")
+```
 
-´´´
-
---Si en 'register_craft' pones en el recipiente o la salida de la definición el texto 'namemod'
---este se remplazará con el nombre del mod y el nombre del ítem juntos, algo asi 'modname:itemname'
---útil para hacer construcciónes del mismo mineral.
-
-´´´lua
-
+Si en 'register_craft' pones en el recipiente o la salida de la definición el texto 'namemod'
+este se remplazará con el nombre del mod y el nombre del ítem juntos, algo asi 'modname:itemname'
+útil para hacer construcciónes del mismo mineral.
+```lua
 aore.register_craft("aore:test_craft", {craft_def}, "testall")
-
-´´´
+```
 
 ## Prueba (Usa esto en otra carpeta de mod)
 
-´´´lua
-
+```lua
 local modname = core.get_modpath(core.get_current_modname())
 
 aore.register(modname..":test", {
@@ -116,5 +99,4 @@ aore.register(modname..":test", {
 	flags = {"testall"}, --Test
 	flags_color = "#BB8855", --Test
 })
-
-´´´
+```
