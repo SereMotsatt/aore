@@ -1,10 +1,10 @@
 --TheAPI--
 --SereMotsatt--
 
-aore.registered_nodes = {}
-aore.registered_craftitems = {}
-aore.registered_tools = {}
-aore.registered_crafts = {}
+local registered_nodes = {}
+local registered_craftitems = {}
+local registered_tools = {}
+local registered_crafts = {}
 
 local S = core.get_translator("aore")
 
@@ -16,7 +16,7 @@ function aore.register_node(name, teibol, flag)
 	if string.find(name, ":") == nil then error('The use of ":" is necessary, for example "namemod:namenode"',2) end
 	local prename = string.gsub(name, ":", "_")
 	local preflag = flag or prename
-	table.insert(aore.registered_nodes, {prename, teibol, preflag})
+	table.insert(registered_nodes, {prename, teibol, preflag})
 	if aore.settings:get_bool("debug_mode", false) then
 		if flag == nil then
 			core.log("warning", "[AORE_REGISTER_NODE]: the flag in "..name.." was not introduced")
@@ -29,7 +29,7 @@ function aore.register_craftitem(name, teibol, flag)
 	if string.find(name, ":") == nil then error('The use of ":" is necessary, for example "namemod:namecraftitem"',2) end
 	local prename = string.gsub(name, ":", "_")
 	local preflag = flag or prename
-	table.insert(aore.registered_craftitems, {prename, teibol, preflag})
+	table.insert(registered_craftitems, {prename, teibol, preflag})
 	if aore.settings:get_bool("debug_mode", false) then
 		if flag == nil then
 			core.log("warning", "[AORE_REGISTER_CRAFTITEM]: the flag in "..name.." was not introduced")
@@ -42,7 +42,7 @@ function aore.register_tool(name, teibol, flag)
 	if string.find(name, ":") == nil then error('The use of ":" is necessary, for example "namemod:nametool"',2) end
 	local prename = string.gsub(name, ":", "_")
 	local preflag = flag or prename
-	table.insert(aore.registered_tools, {prename, teibol, preflag})
+	table.insert(registered_tools, {prename, teibol, preflag})
 	if aore.settings:get_bool("debug_mode", false) then
 		if flag == nil then
 			core.log("warning", "[AORE_REGISTER_TOOL]: the flag in "..name.." was not introduced")
@@ -55,7 +55,7 @@ function aore.register_craft(name, teibol, flag)
 	if string.find(name, ":") == nil then error('The use of ":" is necessary, for example "namemod:namecraft"',2) end
 	local prename = string.gsub(name, ":", "_")
 	local preflag = flag or prename
-	table.insert(aore.registered_crafts, {prename, teibol, preflag})
+	table.insert(registered_crafts, {prename, teibol, preflag})
 	if aore.settings:get_bool("debug_mode", false) then
 		if flag == nil then
 			core.log("warning", "[AORE_REGISTER_CRAFT]: the flag in "..name.." was not introduced")
@@ -288,13 +288,13 @@ function aore.register(namemod, teibol)
 	--
 	
 	--Nodes
-	for i=1, #aore.registered_nodes do
+	for i=1, #registered_nodes do
 		local found = false
 		for k=1, #def.flags do
-			if def.flags[k] == aore.registered_nodes[i][3] then found = true end
+			if def.flags[k] == registered_nodes[i][3] then found = true end
 		end
 		if found then
-			local preregister_value = table.copy(aore.registered_nodes[i][2])
+			local preregister_value = table.copy(registered_nodes[i][2])
 			preregister_value.description = string.gsub(preregister_value.description, "*", def.description)
 			for m=1, #preregister_value.tiles do
 				if preregister_value.tiles_nocolor ~= nil then
@@ -309,20 +309,20 @@ function aore.register(namemod, teibol)
 			if preregister_value.wield_item ~= nil then
 				preregister_value.wield_item = "("..preregister_value.wield_item .. "^[multiply:" .. def.flags_color..")"
 			end
-			local prename = namemod.."_"..aore.registered_nodes[i][1]
+			local prename = namemod.."_"..registered_nodes[i][1]
 			core.register_node(prename, preregister_value)
 		end
 	end
 	
 	
 	--Craftitems
-	for i=1, #aore.registered_craftitems do
+	for i=1, #registered_craftitems do
 		local found = false
 		for k=1, #def.flags do
-			if def.flags[k] == aore.registered_craftitems[i][3] then found = true end
+			if def.flags[k] == registered_craftitems[i][3] then found = true end
 		end
 		if found then
-			local preregister_value = table.copy(aore.registered_craftitems[i][2])
+			local preregister_value = table.copy(registered_craftitems[i][2])
 			preregister_value.description = string.gsub(preregister_value.description, "*", def.description)
 			if preregister_value.inventory_image ~= nil then
 				preregister_value.inventory_image = preregister_value.inventory_image .. "^[multiply:" .. def.flags_color
@@ -330,20 +330,20 @@ function aore.register(namemod, teibol)
 			if preregister_value.wield_item ~= nil then
 				preregister_value.wield_item = preregister_value.wield_item .. "^[multiply:" .. def.flags_color
 			end
-			local prename = namemod.."_"..aore.registered_craftitems[i][1]
+			local prename = namemod.."_"..registered_craftitems[i][1]
 			core.register_craftitem(prename, preregister_value)
 		end
 	end
 	
 	
 	--Tools
-	for i=1, #aore.registered_tools do
+	for i=1, #registered_tools do
 		local found = false
 		for k=1, #def.flags do
-			if def.flags[k] == aore.registered_tools[i][3] then found = true end
+			if def.flags[k] == registered_tools[i][3] then found = true end
 		end
 		if found then
-			local preregister_value = table.copy(aore.registered_tools[i][2])
+			local preregister_value = table.copy(registered_tools[i][2])
 			preregister_value.description = string.gsub(preregister_value.description, "*", def.description)
 			if preregister_value.inventory_image ~= nil then
 				preregister_value.inventory_image = preregister_value.inventory_image .. "^[multiply:" .. def.flags_color
@@ -351,20 +351,20 @@ function aore.register(namemod, teibol)
 			if preregister_value.wield_item ~= nil then
 				preregister_value.wield_item = preregister_value.wield_item .. "^[multiply:" .. def.flags_color
 			end
-			local prename = namemod.."_"..aore.registered_tools[i][1]
+			local prename = namemod.."_"..registered_tools[i][1]
 			core.register_tool(prename, preregister_value)
 		end
 	end
 	
 	
 	--Crafts
-	for i=1, #aore.registered_crafts do
+	for i=1, #registered_crafts do
 		local found = false
 		for k=1, #def.flags do
-			if def.flags[k] == aore.registered_crafts[i][3] then found = true end
+			if def.flags[k] == registered_crafts[i][3] then found = true end
 		end
 		if found then
-			local preregister_value = table.copy(aore.registered_crafts[i][2])
+			local preregister_value = table.copy(registered_crafts[i][2])
 			if type(preregister_value.recipe) == "table" then
 				for m=1, #preregister_value.recipe do
 					for n=1, #preregister_value.recipe do

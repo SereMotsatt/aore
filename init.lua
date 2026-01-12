@@ -1,5 +1,5 @@
 aore = {}
-aore.ver = 20251129
+aore.ver = "26.A1.1"
 aore.registered = {}
 
 aore.settings = core.settings
