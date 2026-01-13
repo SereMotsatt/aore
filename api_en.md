@@ -54,10 +54,13 @@ aore.register(namemod, {
 	custom_craft_tools = teibol.custom_craft_tools or false,
 	
 	--Used for customized the groups of the ore, to harden the mineral block.
-	ore_groups = teibol.groups or {cracky=1}
+	ore_groups = teibol.groups or {cracky=1},
 	
 	--If you put nil or you don't put anything this the tools will have automatic durability.
-	tool_durability = teibol.tool_durability or nil
+	tool_durability = teibol.tool_durability or nil,
+	
+	--For use hoe by the mod "farming" of minetest_game.
+	use_hoe_of_farming = teibol.use_hoe_of_farming or false
 	
 })
 ```

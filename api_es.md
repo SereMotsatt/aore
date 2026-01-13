@@ -54,10 +54,13 @@ aore.register(namemod, {
 	custom_craft_tools = teibol.custom_craft_tools or false,
 	
 	--Usado para customizar los grupos del bloque de mineral natural, Para endurecer el bloque de mineral natural.
-	ore_groups = teibol.groups or {cracky=1}
+	ore_groups = teibol.groups or {cracky=1},
 	
 	--Si lo dejas en nil entonces las herramientas tendrán una durabilidad automatica.
-	tool_durability = teibol.tool_durability or nil
+	tool_durability = teibol.tool_durability or nil,
+	
+	--Para usar las azadas del mod "farming" de minetest_game.
+	use_hoe_of_farming = teibol.use_hoe_of_farming or false
 	
 })
 ```

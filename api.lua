@@ -7,6 +7,7 @@ local registered_tools = {}
 local registered_crafts = {}
 
 local S = core.get_translator("aore")
+local have_farming = minetest.get_modpath("farming")
 
 --
 -- Helpers
@@ -78,14 +79,15 @@ function aore.register(namemod, teibol)
 		custom_mapgen = teibol.custom_mapgen or false,
 		stone_name = teibol.stone_name or "default:stone",
 		stone_texture = teibol.stone_texture or "default_stone.png",
-		stick_name = teibol.stick_name or "default:stick",
+		stick_name = teibol.stick_name or "group:stick",
 		toolpower = teibol.toolpower or 1,
 		flags = teibol.flags or {},
 		flags_color = teibol.flags_color or "#FFFFFF",
 		custom_tools = teibol.custom_tools or false,
 		custom_craft_tools = teibol.custom_craft_tools or false,
 		ore_groups = teibol.ore_groups or {cracky=1},
-		tool_durability = teibol.tool_durability or nil
+		tool_durability = teibol.tool_durability or nil,
+		use_hoe_of_farming = teibol.use_hoe_of_farming or false
 	}
 	table.insert(aore.registered, def)
 	local othergroup = {}
@@ -225,6 +227,15 @@ function aore.register(namemod, teibol)
 				damage_groups = otherdamage_group_sword,
 			},
 		})
+		--Hoe
+		if have_farming and def.use_hoe_of_farming then
+			farming.register_hoe(":"..namemod.."_hoe", {
+				description = S("@1 hoe", def.description),
+				inventory_image = def.main_texture.."_tool_hoe.png",
+				max_uses = def.tool_durability*3,
+				groups = {hoe = 1},
+			})
+		end
 	end
 	
 	--BULT TO INGOT
@@ -282,6 +293,18 @@ function aore.register(namemod, teibol)
 				{"",def.stick_name,""},
 			},
 		})
+		--Hoe craft
+		if have_farming and def.use_hoe_of_farming then
+			core.register_craft({
+				output = namemod.."_hoe",
+				recipe = {
+					{namemod.."_ingot",namemod.."_ingot"},
+					{"",def.stick_name},
+					{"",def.stick_name},
+				},
+			})
+		end
+		
 	end
 	--
 	-- Custom for flags
@@ -303,12 +326,27 @@ function aore.register(namemod, teibol)
 					preregister_value.tiles[m] = preregister_value.tiles[m] .. "^[multiply:" .. def.flags_color
 				end
 			end
+			
 			if preregister_value.inventory_image ~= nil then
 				preregister_value.inventory_image = "("..preregister_value.inventory_image .. "^[multiply:" .. def.flags_color..")"
 			end
 			if preregister_value.wield_item ~= nil then
 				preregister_value.wield_item = "("..preregister_value.wield_item .. "^[multiply:" .. def.flags_color..")"
 			end
+			
+			if preregister_value.tex_item ~= nil then
+				preregister_value.inventory_image = "("..preregister_value.tex_item .. "^[multiply:" .. def.flags_color..")"
+				preregister_value.wield_item = "("..preregister_value.tex_item .. "^[multiply:" .. def.flags_color..")"
+				if preregister_value.tex_item_nocolor ~= nil then
+					preregister_value.inventory_image = preregister_value.inventory_image.."^"..preregister_value.tex_item_nocolor
+					preregister_value.wield_item = preregister_value.wield_item.."^"..preregister_value.tex_item_nocolor
+				end
+			elseif preregister_value.tex_item_nocolor ~= nil then
+				preregister_value.inventory_image = preregister_value.tex_item_nocolor
+				preregister_value.wield_item = preregister_value.tex_item_nocolor
+			end
+			
+			
 			local prename = namemod.."_"..registered_nodes[i][1]
 			core.register_node(prename, preregister_value)
 		end
