@@ -8,6 +8,7 @@ local registered_crafts = {}
 
 local S = core.get_translator("aore")
 local have_farming = minetest.get_modpath("farming")
+local settings = core.settings
 
 --
 -- Helpers
@@ -18,7 +19,7 @@ function aore.register_node(name, teibol, flag)
 	local prename = string.gsub(name, ":", "_")
 	local preflag = flag or prename
 	table.insert(registered_nodes, {prename, teibol, preflag})
-	if aore.settings:get_bool("debug_mode", false) then
+	if settings:get_bool("debug_mode", false) then
 		if flag == nil then
 			core.log("warning", "[AORE_REGISTER_NODE]: the flag in "..name.." was not introduced")
 		end
@@ -31,7 +32,7 @@ function aore.register_craftitem(name, teibol, flag)
 	local prename = string.gsub(name, ":", "_")
 	local preflag = flag or prename
 	table.insert(registered_craftitems, {prename, teibol, preflag})
-	if aore.settings:get_bool("debug_mode", false) then
+	if settings:get_bool("debug_mode", false) then
 		if flag == nil then
 			core.log("warning", "[AORE_REGISTER_CRAFTITEM]: the flag in "..name.." was not introduced")
 		end
@@ -44,7 +45,7 @@ function aore.register_tool(name, teibol, flag)
 	local prename = string.gsub(name, ":", "_")
 	local preflag = flag or prename
 	table.insert(registered_tools, {prename, teibol, preflag})
-	if aore.settings:get_bool("debug_mode", false) then
+	if settings:get_bool("debug_mode", false) then
 		if flag == nil then
 			core.log("warning", "[AORE_REGISTER_TOOL]: the flag in "..name.." was not introduced")
 		end
@@ -57,7 +58,7 @@ function aore.register_craft(name, teibol, flag)
 	local prename = string.gsub(name, ":", "_")
 	local preflag = flag or prename
 	table.insert(registered_crafts, {prename, teibol, preflag})
-	if aore.settings:get_bool("debug_mode", false) then
+	if settings:get_bool("debug_mode", false) then
 		if flag == nil then
 			core.log("warning", "[AORE_REGISTER_CRAFT]: the flag in "..name.." was not introduced")
 		end
@@ -89,7 +90,7 @@ function aore.register(namemod, teibol)
 		tool_durability = teibol.tool_durability or nil,
 		use_hoe_of_farming = teibol.use_hoe_of_farming or false
 	}
-	table.insert(aore.registered, def)
+	--table.insert(aore.registered, def)	--Bug?
 	local othergroup = {}
 	local otherdamage_group = {}
 	local otherdamage_group_sword = {}
@@ -119,6 +120,7 @@ function aore.register(namemod, teibol)
 	toolgroups.supermetal = {20.00/def.toolpower, 16.00/def.toolpower, 11.00/def.toolpower}
 	toolgroups.choppy = {4.60/def.toolpower, 3.00/def.toolpower, 1.60/def.toolpower}
 	toolgroups.snappy = {2.00/def.toolpower, 1.60/def.toolpower, 0.40/def.toolpower}
+	toolgroups.crumbly = {2.00/def.toolpower, 1.60/def.toolpower, 0.60/def.toolpower}
 	--Automatic
 	if def.tool_durability == nil then
 		def.tool_durability = 1 * (def.toolpower*12)
@@ -197,7 +199,7 @@ function aore.register(namemod, teibol)
 				full_punch_interval = 1.0,
 				max_drop_level = 0,
 				groupcaps = {
-					crumbly = {times={3.10, 1.60, 0.60}, uses= def.tool_durability, maxlevel = 1},
+					crumbly = {times = toolgroups.crumbly, uses= def.tool_durability, maxlevel = 1},
 				},
 				damage_groups = otherdamage_group,
 			},
@@ -210,7 +212,7 @@ function aore.register(namemod, teibol)
 				full_punch_interval = 1.0,
 				max_drop_level = 0,
 				groupcaps = {
-					choppy = {times = {4.60, 3.00, 1.60}, uses = def.tool_durability, maxlevel = 1},
+					choppy = {times = toolgroups.choppy, uses = def.tool_durability, maxlevel = 1},
 				},
 				damage_groups = otherdamage_group,
 			},
@@ -222,7 +224,7 @@ function aore.register(namemod, teibol)
 				full_punch_interval = 1,
 				max_drop_level=0,
 				groupcaps={
-					snappy={times={2.00, 1.60, 0.40}, uses=def.tool_durability, maxlevel = 1},
+					snappy={toolgroups.snappy, uses=def.tool_durability, maxlevel = 1},
 				},
 				damage_groups = otherdamage_group_sword,
 			},

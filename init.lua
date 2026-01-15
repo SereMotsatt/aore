@@ -1,8 +1,8 @@
 aore = {}
-aore.ver = "26.C1.2"
-aore.registered = {}
+aore.ver = "26.E1.2.1"
+--aore.registered = {}	-Bug?
 
-aore.settings = core.settings
+--aore.settings = core.settings		-XDD?
 
 modpath = core.get_modpath("aore")
 

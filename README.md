@@ -10,6 +10,10 @@ Pronto se hará la documentación completa sobre los ayudantes.
 
 # Cambios
 
+## **26.E1.2.1**
+Corrección de bugs con las herramientas<br/>
+"Optimizaciones" de variables que deberían ser locales<br/>
+
 ## **26.C1.2**
 Se añadió compatibilidad con el mod *Farming* para añadir las azadas<br/>
 Se parcheó el bug con las texturas planas (Wield Item, Inventory) a la hora de **registrar un nodo** (Ayudantes)<br/>
