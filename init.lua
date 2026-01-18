@@ -15,7 +15,7 @@ aore.register_node("aore:test_node", {
 	tiles = {"aore_test_block.png"},
 	groups = {supermetal=2},
 }, "testall")
-
+--TEST
 aore.register_node("aore:test_egg", {
 	description = "* egg test",
 	tiles = {"aore_test_block.png"},
